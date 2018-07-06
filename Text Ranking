@@ -1,0 +1,119 @@
+from __future__ import unicode_literals
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize, sent_tokenize
+from string import punctuation
+from hazm import *
+import nltk
+
+class TextSummarizer:
+     #ps = PorterStemmer()
+     stemmer = Stemmer()
+     stWords = stopwords.words=['و','در','به','از','که','این','را','با','است','برای','آن','یک','خود','تا','کرد','بر','هم','نیز','گفت','می‌شود','وی','شد','دارد','ما','اما','یا','شده','باید','هر','آنها','بود','او','دیگر','دو','مورد','می‌کند','شود','کند','وجود','بین' ,'پیش' ,'شده_است' ,'پس' ,'نظر','اگر','همه' ,'یکی' ,'حال' ,'هستند' ,'من' ,'کنند','نیست' ,'باشد' ,'چه','بی' ,'می' ,'بخش' ,'می‌کنند' ,'همین' ,'افزود' ,'هایی' ,'دارند' ,'راه' ,'همچنین' ,'روی' ,'داد' ,'بیشتر' ,'بسیار' ,'سه','داشت' ,'چند' ,'سوی' ,'تنها','هیچ' ,'میان' ,'اینکه' ,'شدن' ,'بعد' ,'جدید' ,'ولی','حتی','کردن' ,'برخی' ,'کردند' ,'می‌دهد','اول' ,'نه' ,'کرده_است' ,'نسبت' ,'بیش','شما' ,'چنین' ,'طور' ,'افراد','تمام','درباره' ,'بار' ,'بسیاری' ,'می‌تواند' ,'کرده' ,'چون' ,'ندارد' ,'دوم' ,'بزرگ' ,'طی' ,'حدود''تهیه','تبدیل','مناسب','زیرا','مشخص','می‌توانند','نزدیک','جریان','روند','بنابراین','می‌دهند','یافت','نخستین','بالا','پنج','ریزی','عالی','چیزی','نخست','بیشتری','ترتیب','شده_بود','خاص','خوبی','خوب','شروع','فرد','کامل','غیر','می‌رود','دهند','آخرین','دادن','جدی','بهترین','شامل','گیرد','بخشی','باشند','تمامی','بهتر','داده_است','حد','نبود','کسانی','می‌کرد','داریم','علیه','می‌باشد','دانست','ناشی','داشتند','دهه','می‌شد','ایشان','آنجا','گرفته_است','دچار','می‌آید','لحاظ','آنکه','داده','بعضی','هستیم','اند','برداری','نباید','می‌کنی','نشست','سهم','همیشه','آمد','اش','وگو','می‌کنم','حداقل','طبق','جا','خواهد_کرد','نوعی','چگونه','رفت','هنگام','فوق','روش','ندارند','سعی','بند','شمار','کلی','کافی','مواجه','همچنان','زیاد','سمت','کوچک','داشته_است','چیز','پشت','آورد','حالا','روبه','سال‌های','دادند','می‌کردند','عهده','نیمه','جایی','دیگران','سی','بروز','یکدیگر','آمده_است','جز','کنم','سپس','کنندگان','خودش','همواره','یافته','شان','صرف','نمی‌شود','رسیدن','چهارم','یابد','متر','ساز','داشته','کرده_بود','باره','نحوه','کردم','تو','شخصی','داشته_باشند','محسوب','پخش','کمی','متفاوت','سراسر','کاملا','داشتن','نظیر','آمده','گروهی','فردی','همچون','خطر','خویش','کدام','دسته','سبب','عین','آوری','متاسفانه','بیرون','دار','ابتدا','شش','افرادی','می‌گویند','سالهای','درون','نیستند','یافته_است','ها','که','پر','خاطرنشان' ,'گاه','جمعی','اغلب','دوباره','می‌یابد','لذا','های','زاده','گرد','اینجا']
+     stopWords = set((stWords)+list(punctuation))
+     #stopWords = set(stopwords.words("english")+ list(punctuation))
+     text = ""
+     sentences = ""
+     def tokenize_sentence(self):
+          words = word_tokenize(self.text)
+          print(words)
+          return words;
+
+     def input_text(self):
+          
+          while True:
+               self.text = input("Enter the text to summarize\n")
+               if(len(self.text)>10):
+                    break;
+               else:
+                    print("Please input the text as length at least 10")
+
+     
+     def cal_freq(self,words):
+          
+          # Second, we create a dictionary for the word frequency table.
+
+          freqTable = dict()
+          for word in words:
+               word = word.lower()
+               if word in self.stopWords:
+                    continue
+               #word = stemmer.stem(word)
+               
+               if word in freqTable:
+                    freqTable[word] += 1
+               else:
+                    freqTable[word] = 1
+          return freqTable;
+
+
+     def compute_sentence(self,freqTable):
+          
+          self.sentences = sent_tokenize(self.text)
+          sentenceValue = dict() # dict() creates the dictionary with key and it's corresponding value
+
+          for sentence in self.sentences:
+               
+               for index, wordValue in enumerate(freqTable, start=1):
+                    
+                    if wordValue in sentence.lower(): # index[0] return word
+                         
+                         
+                         if sentence in sentenceValue:
+                              
+                              sentenceValue[sentence] += index # index return value of occurence of that word
+                              #sentenceValue.update({sentence: index})
+                              #print(sentenceValue)
+                         else:
+                              
+                             # sentenceValue[sentence] = wordValue
+                              sentenceValue[sentence] = index
+                              #print(sentenceValue)
+
+          
+          print(sentenceValue)
+          return sentenceValue;
+         
+           
+
+     def sumAvg(self,sentenceValue):
+          sumValues = 0
+          for sentence in sentenceValue:
+               
+               sumValues += sentenceValue[sentence]
+
+           # Average value of a sentence from original text
+          average = int(sumValues / len(sentenceValue))
+
+          return average;
+
+
+     def print_summary(self,sentenceValue,average):
+          summary = ''
+          for sentence in self.sentences:
+               if (sentence in sentenceValue) and (sentenceValue[sentence] > (1.5 * average)):
+                    summary += " " + sentence
+          
+          #print(summary)
+          return summary
+               
+          
+     
+
+
+
+
+#words= word_tokenize(text)
+
+ts = TextSummarizer()
+ts.input_text()
+words = ts.tokenize_sentence()
+freqTable = ts.cal_freq(words)
+sentenceValue = ts.compute_sentence(freqTable)
+avg = ts.sumAvg(sentenceValue)
+summary = ts.print_summary(sentenceValue,avg)
+
+print("==========================================================")
+print("Final summary is:\n\n")
+print(summary)
+#print(words)
+
